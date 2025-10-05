@@ -225,28 +225,12 @@ class Api
      */
     public function get_bearer_token()
     {
-        $header = null;
-
-        if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-            $header = $_SERVER['HTTP_AUTHORIZATION'];
-        }
-        elseif (isset($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
-            $header = $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
-        }
-        elseif (function_exists('apache_request_headers')) {
-            $headers = apache_request_headers();
-            if (isset($headers['Authorization'])) {
-                $header = $headers['Authorization'];
-            }
-        }
-
-        if ($header && preg_match('/Bearer\s(\S+)/', $header, $matches)) {
+        $header = $_SERVER['HTTP_AUTHORIZATION'] ?? '';
+        if (preg_match('/Bearer\s(\S+)/', $header, $matches)) {
             return $matches[1];
         }
-
         return null;
     }
-
 
     /**
      * require_jwt
@@ -297,7 +281,7 @@ class Api
 
         $this->cleanup_expired_refresh_tokens($user_id);
 
-        $this->_lava->db->raw("insert into {$this->refresh_token_table} (user_id, token, expires_at) VALUES (?, ?, ?)", [$user_id, $refresh_token_encrypted, date('Y-m-d H:i:s', $refresh_payload['exp'])]);
+        $this->_lava->db->raw('insert into refresh_tokens (user_id, token, expires_at) VALUES (?, ?, ?)', [$user_id, $refresh_token_encrypted, date('Y-m-d H:i:s', $refresh_payload['exp'])]);
 
         return [
             'access_token' => $access_token,
@@ -320,7 +304,7 @@ class Api
         }
 
         $encrypted = $this->encrypt_token($refresh_token);
-        $stmt = $this->_lava->db->raw("select * from {$this->refresh_token_table} WHERE token = ? LIMIT 1", [$encrypted]);
+        $stmt = $this->_lava->db->raw('select * from refresh_tokens WHERE token = ? LIMIT 1', [$encrypted]);
         $found = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if (!$found || strtotime($found['expires_at']) < time()) {
@@ -344,12 +328,12 @@ class Api
     public function revoke_refresh_token($refresh_token)
     {
         $encrypted = $this->encrypt_token($refresh_token);
-        $this->_lava->db->raw("delete from {$this->refresh_token_table} WHERE token = ?", [$encrypted]);
+        $this->_lava->db->raw('delete from refresh_tokens WHERE token = ?', [$encrypted]);
     }
 
     public function cleanup_expired_refresh_tokens($user_id)
     {
-        $this->_lava->db->raw("delete from {$this->refresh_token_table} WHERE user_id = ? AND expires_at < NOW()", [$user_id]);
+        $this->_lava->db->raw('delete from refresh_tokens WHERE user_id = ? AND expires_at < NOW()', [$user_id]);
     }
 
     // --------------------------

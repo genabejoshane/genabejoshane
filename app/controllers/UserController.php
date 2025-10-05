@@ -10,117 +10,52 @@ class UserController extends Controller {
     public function __construct()
     {
         parent::__construct();
-        $this->call->library('pagination');
-        $this->call->library('session'); 
-        
     }
 
-    /*public function get_all(){
-       
-        $data['s'] = $this->UserModel->all();
-        $this->call->view('get_all', $data);
-    }*/
-        public function landing_page() {
-        $this->call->view('create');
+    public function index()
+    {
+        $data['users'] = $this->UserModel->all();
+        $this->call->view('user/view', $data);    
     }
-
-    public function user_view() {
-        $this->call->view('User_view');
-    }
-
-   
-
-
-
-    public function create() {
-        
-        $this->call->library('form_validation');
-        if($this->form_validation->submitted()){
-
-    
+    public function create()
+    {
+        if($this->io->method() == 'post') {
             $username = $this->io->post('username');
-            $email    = $this->io->post('email');
-            $email_token = bin2hex(random_bytes(16)); // generates a 32-character token
-            $password = password_hash($password, PASSWORD_BCRYPT);
-            $password_confirmation = $this->io->post('password_confirmation');
-            $role     = $this->io->post('role');
-            $created_at = date('Y-m-d H:i:s', time() + 8*3600);
+            $email = $this->io->post('email');
 
-            $this->UserModel->create($username, $email, $email_token, $password, $role, $created_at);
+            $data = [
+                'username' => $username,
+                'email' => $email
+            ];
 
-           
-            $this->session->set_flashdata('success','User added successfully!');
-            redirect('users/view');
-            }
-            else
-            {
-                $this->call->view('add_User');
-            }
-        
+            $this->UserModel->insert($data);
+            redirect('/');
+            
+        }else {
+            $this->call->view('user/create');
         }
-           
+    }
+    public function update($id)
+    {
 
-    public function update($id) {
     $data['user'] = $this->UserModel->find($id);
 
-    if ($this->io->method() === 'post') {
-        $password = $this->io->post('password');
-        $password_hashed = password_hash($password, PASSWORD_BCRYPT);
-         $email_token = bin2hex(random_bytes(16)); 
-
+    if ($this->io->method() == 'post') {    
         $data = [
-            'username'   => $this->io->post('username'),
-            'email'      => $this->io->post('email'),
-            'email_token'=> $email_token,
-            'password'   => $password_hashed,
-            'role'       => $this->io->post('role'),
-            'updated_at' => date('Y-m-d H:i:s', time() + 8*3600)
+            'username' => $this->io->post('username'),
+            'email'    => $this->io->post('email')
         ];
 
         $this->UserModel->update($id, $data);
-        redirect('users/view');
+
+        redirect('/');
     } else {
-        $this->call->view('update_User', $data);
+        $this->call->view('user/update', $data);
     }
-}
-
-
-    public function delete($id) {
+    }
+    public function delete($id)
+    {
         $this->UserModel->delete($id);
-        redirect('users/view');
+        redirect('/');
     }
-
-    public function get_all()
-{
-   $page = 1;
-    if (isset($_GET['page']) && ! empty($_GET['page'])) {
-        $page = $this->io->get('page');
-    }
-
-    // Search term
-    $q = '';
-    if (isset($_GET['q']) && ! empty($_GET['q'])) {
-        $q = trim($this->io->get('q'));
-    }
-
-    $records_per_page = 10;
-
-    $all = $this->UserModel->page($q, $records_per_page, $page);
-        $data['all'] = $all['records'];
-        $total_rows = $all['total_rows'];
-        $this->pagination->set_options([
-            'first_link'     => '⏮ First',
-            'last_link'      => 'Last ⏭',
-            'next_link'      => 'Next →',
-            'prev_link'      => '← Prev',
-            'page_delimiter' => '&page='
-        ]);
-        $this->pagination->set_theme('bootstrap'); // or 'tailwind', or 'custom'
-        $this->pagination->initialize($total_rows, $records_per_page, $page, 'users/view?q='.$q, 1);
-        $data['page'] = $this->pagination->paginate();
-        $this->call->view('view_page', $data);
-}
-
-
-
 }

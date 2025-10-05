@@ -56,7 +56,7 @@ defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
 | LavaLust Version
 | -------------------------------------------------------------------
 */
-$config['VERSION']                 = '4.2.4';
+$config['VERSION']                 = '4.2.2';
 
 /*
 | -------------------------------------------------------------------
@@ -90,7 +90,7 @@ $config['base_url'] 				= '';
 | variable to blank.
 |
 */
-$config['index_page']               = '';
+$config['index_page']               = 'index.php';
 
 /*
 |--------------------------------------------------------------------------
@@ -164,19 +164,6 @@ $config['charset']					= 'UTF-8';
 
 /*
 |--------------------------------------------------------------------------
-| Email Settings (LavaLust Email Library)
-|--------------------------------------------------------------------------
-| These settings are used by `scheme/libraries/Email.php` which sends mail
-| using PHP's mail() under the hood. Make sure the `sender_email` is a real
-| address on your domain to avoid SPF/DMARC rejections in production.
-| Docs: https://lavalust.netlify.app/ (Libraries → Email Class)
-*/
-/*$config['email_sender_email']       = 'nj.prime04@gmail.com';
-$config['email_sender_name']        = 'LavaLust App';
-$config['email_reply_to']           = 'no-reply@example.com';
-*/
-/*
-|--------------------------------------------------------------------------
 | Error Views Directory Path
 |--------------------------------------------------------------------------
 |
@@ -225,7 +212,7 @@ $config['language'] 				= 'en-US';
 $config['sess_driver']             = 'file';
 $config['sess_cookie_name']        = 'LLSession';
 $config['sess_expiration']         = 7200;
-$config['sess_save_path']          = sys_get_temp_dir();
+$config['sess_save_path']          = '';
 $config['sess_match_ip']           = TRUE;
 $config['sess_match_fingerprint']  = TRUE;
 $config['sess_time_to_update']     = 300;

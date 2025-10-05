@@ -43,33 +43,8 @@ defined('PREVENT_DIRECT_ACCESS') OR exit('No direct script access allowed');
 |
 */
 
-$router->get('/', 'UserController::landing_page');
-
-$router->get('/users/view', 'UserController::get_all');
-$router->match('/users/add_User', 'UserController::create', ['GET', 'POST']);
-$router->match('/users/update_User/{id}', 'UserController::update', array('GET', 'POST'));
-$router->match('/users/delete/{id}', 'UserController::delete', array('GET', 'POST'));
-
-
-/*$router->match('/update', 'UserController::update', array('GET', 'POST'));
-$router->match('/update/{id}', 'UserController::update', array('GET', 'POST')); */
-
-
-//$router->match('/get_all/{page}', 'UserController::get_all', array('GET', 'POST'));
-//$router->match('/students/search', 'UserController::search', array('GET', 'POST'));
-$router->match('/user/dashboard', 'UserController::user_view', array('GET', 'POST'));
-
-/*$router->match('/auth/login', 'AuthController::login', array('GET', 'POST'));
-$router->get('/auth/logout', 'AuthController::logout');
-$router->match('/auth/register', 'AuthController::register', array('GET', 'POST'));
-
-$router->match('auth/password-reset', 'AuthController::password_reset', ['POST', 'GET']);
-$router->match('auth/set-new-password', 'AuthController::set_new_password', ['POST', 'GET']);
-*/
-
-$router->match('/auth/login', 'Auth::login', array('GET', 'POST'));
-$router->get('/auth/logout', 'Auth::logout');
-$router->match('/auth/register', 'Auth::register', array('GET', 'POST'));
-
-$router->match('auth/password-reset', 'Auth::password_reset', ['POST', 'GET']);
-$router->match('auth/set-new-password', 'Auth::set_new_password', ['POST', 'GET']);
+$router->get('/', 'UserController::index');
+$router->match('/user/create', 'UserController::create', ['GET', 'POST']);
+$router->match('/user/update/{id}', 'UserController::update', ['GET', 'POST']);
+$router->get('/user/delete/{id}', 'UserController::delete');
+ 
